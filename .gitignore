@@ -10,6 +10,8 @@
 # Build products
 build/
 DerivedData/
+iOS projectTests/
+iOS projectUITests/
 
 # Swift Package Manager
 .swiftpm/
