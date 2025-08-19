@@ -39,6 +39,7 @@ final class LoginViewModel {
                 monthlyBudget: 0.0,
                 photoURL: "",
                 email: user.email ?? email,
+                name: fullName,
                 isFirstTime: true,
                 pendingInvites: []
             )
@@ -95,6 +96,7 @@ final class LoginViewModel {
                     monthlyBudget: 0.0,
                     photoURL: "",
                     email: firebaseUser.email ?? "",
+                    name: firebaseUser.displayName ?? "",
                     isFirstTime: true,
                     pendingInvites: []
                 )

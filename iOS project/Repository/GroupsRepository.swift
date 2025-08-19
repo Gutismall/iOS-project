@@ -36,22 +36,22 @@ final class GroupsRepository {
     /// Create a new group with the current user as the first member
     func createGroup(name: String, icon: String) async throws -> Group {
         guard let user = Auth.auth().currentUser else {
-            throw NSError(domain: "GroupsRepository", code: 401, userInfo: [NSLocalizedDescriptionKey: "No user logged in"]) }
+            throw NSError(domain: "GroupsRepository", code: 401, userInfo: [NSLocalizedDescriptionKey: "No user logged in"])
+        }
 
         let groupRef = db.collection("Groups").document()
         let groupId = groupRef.documentID
-        let members: [[String: Any]] = [[
-            "userName": user.displayName ?? "",
-            "userIconUrl": user.photoURL?.absoluteString ?? ""]]
+        let members: [String] = [user.uid]
 
         try await groupRef.setData([
             "name": name,
             "image": icon,
-            "members": members])
+            "members": members
+        ])
         return Group(
             id: groupId,
             name: name,
-            members: [userNameAndIcon(userName: user.displayName ?? "", userIconUrl: user.photoURL?.absoluteString ?? "")],
+            members: members,
             groupIcon: icon,
             activities: [],
             charges: []
@@ -93,12 +93,7 @@ final class GroupsRepository {
         let id = doc.documentID
         let name = data["name"] as? String ?? ""
         let groupIcon = data["image"] as? String ?? ""
-        let membersArray = data["members"] as? [[String: Any]] ?? []
-        let members: [userNameAndIcon] = membersArray.compactMap { dict in
-            guard let userName = dict["userName"] as? String,
-                  let userIconUrl = dict["userIconUrl"] as? String else { return nil }
-            return userNameAndIcon(userName: userName, userIconUrl: userIconUrl)
-        }
+        let members: [String] = data["members"] as? [String] ?? []
 
         async let charges: [Charge] = {
             let snap = try await db.collection("Groups").document(id).collection("charges").getDocuments()
@@ -132,6 +127,7 @@ final class GroupsRepository {
 
         return Group(id: id, name: name, members: members, groupIcon: groupIcon, activities: try await activities, charges: try await charges)
     }
+    
     func removeChargeFromGroup(charge: Charge, groupId: String) async throws {
         let chargeRef = db.collection("Groups")
             .document(groupId)

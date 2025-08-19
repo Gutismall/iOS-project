@@ -17,68 +17,61 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var userIconDisplay: UIImageView!
     @IBOutlet weak var userEmailText: UILabel!
     @IBOutlet weak var userNameText: UILabel!
-    private var contentSizeObservation: NSKeyValueObservation?
     
     let ViewModel = SettingsVM()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         TopContainer.layer.cornerRadius = 10
-        config()
-        let displayName = Auth.auth().currentUser?.displayName
-        self.userNameText.text = displayName
+        tableConfig()
+        userConfig()
+        
+    }
+    private func userConfig(){
+        self.userNameText.text = UserViewModel.shared.user.name
         
         self.userEmailText.text = UserViewModel.shared.user.email
         
         let photoURL = UserViewModel.shared.user.photoURL
-        print(photoURL)
+        
         if let url = URL(string: photoURL), url.scheme == "http" || url.scheme == "https" {
             self.userIconDisplay.kf.setImage(with: url)
         } else {
             self.userIconDisplay.image = UIImage(systemName: photoURL)
         }
-        
-    }
-    deinit {
-        contentSizeObservation?.invalidate()
     }
     
-}
-
-extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
-    func config(){
+    
+    private func tableConfig(){
         SettingsTable.dataSource = self
         SettingsTable.delegate = self
         
-        SettingsTable.isScrollEnabled = false
+        SettingsTable.layer.cornerRadius = 8
+        SettingsTable.clipsToBounds = true
+        
         SettingsTable.rowHeight = UITableView.automaticDimension
         SettingsTable.estimatedRowHeight = 56
         
-        // Remove default paddings / extra separators
-        if #available(iOS 15.0, *) {
-            SettingsTable.sectionHeaderTopPadding = 0
-        }
+
         SettingsTable.tableHeaderView = UIView()
         SettingsTable.tableFooterView = UIView()
         SettingsTable.separatorInset = .zero
         SettingsTable.layoutMargins = .zero
         
-        // Rounded corners that actually clip
-        SettingsTable.layer.cornerRadius = 8
-        SettingsTable.clipsToBounds = true
         
-        // Observe content size to drive the height constraint
-        contentSizeObservation = SettingsTable.observe(\.contentSize, options: [.new]) { [weak self] table, _ in
-            guard let self else { return }
-            DispatchQueue.main.async {
-                self.HightConstraint.constant = table.contentSize.height
-                self.view.layoutIfNeeded()
-            }
-        }
-        
-        // Initial load -> triggers the observer above
-        SettingsTable.reloadData()
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        SettingsTable.reloadData()
+        SettingsTable.layoutIfNeeded()
+        self.HightConstraint.constant = self.SettingsTable.contentSize.height
+        
+    }
+}
+
+extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
+    
     
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

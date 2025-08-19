@@ -27,6 +27,7 @@ final class UserRepository {
         let isFirstTime = data["isFirstTime"] as? Bool ?? true
         let photoURL = data["photoURL"] as? String ?? ""
         let email = data["email"] as? String ?? ""
+        let name = data["name"] as? String ?? ""
         
         return User(
             id: userId,
@@ -34,6 +35,7 @@ final class UserRepository {
             monthlyBudget: monthlyBudget,
             photoURL: photoURL,
             email: email,
+            name: name,
             isFirstTime: isFirstTime,
             pendingInvites: pendingInvites
         )

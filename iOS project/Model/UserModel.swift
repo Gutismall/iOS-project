@@ -3,11 +3,12 @@ import Foundation
 import FirebaseCore
 
 struct User :Codable{
-    var id: String
+    let id: String
     var groupIds: [String]
     var monthlyBudget: Double
-    var photoURL:String
-    var email:String
+    let photoURL:String
+    let email:String
+    let name: String
     var isFirstTime: Bool
     var pendingInvites: [Invite]
 }

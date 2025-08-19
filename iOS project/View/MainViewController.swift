@@ -1,4 +1,5 @@
 import UIKit
+import Lottie
 import FirebaseAuth
 import Combine
 import Kingfisher
@@ -8,27 +9,42 @@ class MainViewController: UIViewController {
     @IBOutlet weak var monthTitleLabel: UILabel!
     @IBOutlet weak var budgetTitleLabel: UILabel!
     @IBOutlet weak var lastActivity: UITableView!
+    @IBOutlet weak var noGroupsLabel: UILabel!
     @IBOutlet weak var groupsSpending: UITableView!
     @IBOutlet weak var topCard: UIView!
     @IBOutlet weak var bottomCard: UIView!
     @IBOutlet weak var budgetProgressBar: UIProgressView!
     
+    @IBOutlet weak var topCardHeight: NSLayoutConstraint!
+    
+    @IBOutlet weak var bottomCardHeight: NSLayoutConstraint!
+    
     private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        initAnimation()
         lastActivity.register(MainLastActivityTableViewCell.self, forCellReuseIdentifier: MainLastActivityTableViewCell.id)
-        initTableViews()
-        initViews()
-        
         GroupsViewModel.shared.$groups.receive(on: DispatchQueue.main).sink { [weak self] _ in
-            self?.groupsSpending.reloadData()
+            let isEmpty = GroupsViewModel.shared.groups.isEmpty
+            if isEmpty{
+                self?.groupsSpending.isHidden = true
+                self?.noGroupsLabel.isHidden = false
+            }
+            else{
+                self?.groupsSpending.isHidden = false
+                self?.noGroupsLabel.isHidden = true
+                self?.groupsSpending.reloadData()
+            }
             self?.updateBudgetProgressBar()
         }.store(in: &cancellables)
         
         ActivityViewModel.shared.$activities.receive(on: DispatchQueue.main).sink { [weak self] _ in
             self?.lastActivity.reloadData()
         }.store(in: &cancellables)
+        
+        initTableViews()
+        initViews()
     }
     
     func initViews() {
@@ -51,22 +67,6 @@ class MainViewController: UIViewController {
         
         let uin = UINib(nibName: "ActivityCell", bundle: nil)
         lastActivity.register(uin, forCellReuseIdentifier: ActivityCell.id)
-        
-        updateGroupsTableBackground()
-    }
-    
-    func updateGroupsTableBackground() {
-        let groups = GroupsViewModel.shared.groups
-        if groups.isEmpty {
-            let messageLabel = UILabel()
-            messageLabel.text = "No groups to display"
-            messageLabel.textAlignment = .center
-            messageLabel.font = UIFont.systemFont(ofSize: 16)
-            messageLabel.textColor = .lightGray
-            groupsSpending.backgroundView = messageLabel
-        } else {
-            groupsSpending.backgroundView = nil
-        }
     }
     
     func updateMonthTitleLabel() {
@@ -86,7 +86,6 @@ class MainViewController: UIViewController {
     }
     
     func updateBudgetProgressBar() {
-        budgetProgressBar.transform = CGAffineTransform(scaleX: 1, y: 4)
         budgetProgressBar.progress = Float(UserViewModel.shared.totalUserExpences() / UserViewModel.shared.user.monthlyBudget)
     }
     
@@ -100,6 +99,8 @@ class MainViewController: UIViewController {
         topCard.layer.shadowOffset = CGSize(width: 0, height: 3)
         topCard.layer.shadowRadius = 10
         topCard.layer.cornerRadius = 20
+        
+        
     }
     
     func updateBottomCardStyle() {
@@ -111,7 +112,35 @@ class MainViewController: UIViewController {
         bottomCard.layer.shadowOffset = CGSize(width: 0, height: 3)
         bottomCard.layer.shadowRadius = 10
         bottomCard.layer.cornerRadius = 20
-
+        
+        
+    }
+    
+    private func initAnimation() {
+        let animationView = LottieAnimationView(name: "Money rain")
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.contentMode = .scaleAspectFill
+        animationView.loopMode = .playOnce
+        animationView.play()
+        view.insertSubview(animationView, at: 0)
+        NSLayoutConstraint.activate([
+            animationView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            animationView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            animationView.topAnchor.constraint(equalTo: view.topAnchor),
+            animationView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.lastActivity.reloadData()
+        self.lastActivity.layoutIfNeeded()
+        self.bottomCardHeight.constant = self.lastActivity.contentSize.height
+        
+        self.groupsSpending.reloadData()
+        self.groupsSpending.layoutIfNeeded()
+        self.topCardHeight.constant = self.groupsSpending.contentSize.height
+        
     }
 }
 

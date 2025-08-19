@@ -64,15 +64,12 @@ class ActivityViewController: UIViewController {
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.ActivityTableHeightConstraints.constant = self.activityTableView.contentSize.height
         self.invitesTable.reloadData()
+        self.invitesTable.layoutIfNeeded()
+        self.ActivityTableHeightConstraints.constant = self.activityTableView.contentSize.height
+        
     }
     
-    func resizeActivityTableToFitContent() {
-        activityTableView.layoutIfNeeded() // ensure contentSize is up-to-date
-        ActivityTableHeightConstraints.constant = activityTableView.contentSize.height
-        view.layoutIfNeeded()
-    }
 
     func tableViews() {
         activityTableView.layer.cornerRadius = 20

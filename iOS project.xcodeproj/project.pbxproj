@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D71DA1502E07268200ACB4AF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D71DA14F2E07268200ACB4AF /* Lottie */; };
 		D737CCE92E061F1B00BF3DE8 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = D737CCE82E061F1B00BF3DE8 /* SwiftUICharts */; };
+		D75088DF2E55058500D60CBD /* Money rain.json in Resources */ = {isa = PBXBuildFile; fileRef = D75088DE2E55058500D60CBD /* Money rain.json */; };
 		D75DD23A2E0F92E7001B2B17 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D75DD2392E0F92E7001B2B17 /* GoogleSignIn */; };
 		D75DD23C2E0F92E7001B2B17 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D75DD23B2E0F92E7001B2B17 /* GoogleSignInSwift */; };
 		D75DD2792E10568A001B2B17 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = D75DD2782E10568A001B2B17 /* FacebookLogin */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D75088DE2E55058500D60CBD /* Money rain.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "Money rain.json"; path = "iOS project/Assets.xcassets/Money rain.json"; sourceTree = "<group>"; };
 		D78CC9FA2DF9C9E50085F849 /* iOS project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D78CCA102DF9C9E90085F849 /* iOS projectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iOS projectTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D78CCA1A2DF9C9E90085F849 /* iOS projectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iOS projectUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +115,7 @@
 		D78CC9F12DF9C9E50085F849 = {
 			isa = PBXGroup;
 			children = (
+				D75088DE2E55058500D60CBD /* Money rain.json */,
 				D77EF2CD2E3BC03A006FB289 /* iOS project */,
 				D78CCA132DF9C9E90085F849 /* iOS projectTests */,
 				D78CCA1D2DF9C9E90085F849 /* iOS projectUITests */,
@@ -270,6 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D75088DF2E55058500D60CBD /* Money rain.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

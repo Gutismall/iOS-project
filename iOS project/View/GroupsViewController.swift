@@ -151,9 +151,11 @@ extension GroupDeteailsInfo : UITableViewDelegate , UITableViewDataSource{
         guard let cell = membersTable.dequeueReusableCell(withIdentifier: GroupDetailsInfoUserListTableViewCell.id, for: indexPath) as? GroupDetailsInfoUserListTableViewCell else {
             return UITableViewCell()
         }
-        let isAdmin = indexPath.row == 0 ? true : false
-        let groupMember = group.members[indexPath.row]
-        cell.config(userName: groupMember.userName, userIcon: groupMember.userIconUrl, isAdmin: isAdmin)
+        var isAdmin = false
+        if indexPath.row == 0 {
+            isAdmin = true
+        }
+        cell.config(userId: group.members[indexPath.row],isAdmin: isAdmin)
         return cell
     }
 }

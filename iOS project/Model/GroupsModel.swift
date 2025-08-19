@@ -4,7 +4,7 @@ import UIKit
 struct Group{
     let id: String
     var name: String
-    var members: [userNameAndIcon]
+    var members: [String]
     var groupIcon: String
     let activities: [Activity]
     var charges: [Charge]
@@ -15,9 +15,4 @@ struct Group{
         }
         return total
     }
-}
-
-struct userNameAndIcon {
-    let userName: String
-    let userIconUrl: String
 }

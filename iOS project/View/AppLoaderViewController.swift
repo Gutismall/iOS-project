@@ -33,9 +33,10 @@ class AppLoaderViewController: UIViewController {
             GroupsViewModel.resetShared()
             ActivityViewModel.resetShared()
             
-            await UserViewModel.shared.fetchUser(userId: uid)
+            let user = await UserViewModel.shared.fetchUser(userId: uid)
+            UserViewModel.shared.setUser(user: user)
             // Load group data
-            let groupIds = UserViewModel.shared.user?.groupIds ?? []
+            let groupIds = user.groupIds
             await GroupsViewModel.shared.fetchGroups(groupIds: groupIds)
             
             var allActivities = GroupsViewModel.shared.groups.flatMap { $0.activities }

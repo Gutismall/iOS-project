@@ -31,14 +31,21 @@ class GroupDetailsInfoUserListTableViewCell: UITableViewCell {
         
     }
     
-    func config(userName:String,userIcon:String,isAdmin:Bool){
-        self.UserName.text = userName
+    func config(userId: String,isAdmin: Bool){
+        
         self.isAdmin.text = isAdmin ? "Admin" : ""
-
-        if let url = URL(string: userIcon), url.scheme == "http" || url.scheme == "https" {
-            self.UserIcon.kf.setImage(with: url)
-        } else {
-            self.UserIcon.image = UIImage(systemName: userIcon)
+        
+        Task {
+            let user = await UserViewModel.shared.fetchUser(userId: userId)
+            // Assuming user has properties `name` and `icon`
+            await MainActor.run {
+                self.UserName.text = user.name
+                if let url = URL(string: user.photoURL), url.scheme == "http" || url.scheme == "https" {
+                    self.UserIcon.kf.setImage(with: url)
+                } else {
+                    self.UserIcon.image = UIImage(systemName: user.photoURL)
+                }
+            }
         }
     }
 }

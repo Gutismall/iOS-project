@@ -14,12 +14,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private var authHandle: AuthStateDidChangeListenerHandle?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-            guard let ws = (scene as? UIWindowScene) else { return }
-            let window = UIWindow(windowScene: ws)
-            self.window = window
-            window.makeKeyAndVisible()
+        guard let ws = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: ws)
+        self.window = window
+        
+        if Auth.auth().currentUser != nil {
+            // User is logged in, go to AppLoaderViewController
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let appLoaderVC = storyboard.instantiateViewController(withIdentifier: "AppLoaderViewController")
+            window.rootViewController = appLoaderVC
+        } else {
+//             Not logged in, go to initial VC
             window.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
         }
+        
+        window.makeKeyAndVisible()
+    }
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.

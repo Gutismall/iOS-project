@@ -7,7 +7,13 @@ final class UserViewModel: ObservableObject {
     @Published private(set) var user: User!
     private let userRepository = UserRepository()
     
-    private init() {}
+    private init() {
+        
+    }
+    
+    func setUser(user:User){
+        self.user = user
+    }
     
     // New session: fresh instance
     static func resetShared() {
@@ -20,8 +26,8 @@ final class UserViewModel: ObservableObject {
     }
     
     @MainActor
-    func fetchUser(userId:String) async{
-        self.user = try? await self.userRepository.fetchUser(userId: userId)
+    func fetchUser(userId:String) async -> User{
+        return try! await self.userRepository.fetchUser(userId: userId)!
     }
     
     func sendInvite(toEmail email: String, groupId: String) async throws {
