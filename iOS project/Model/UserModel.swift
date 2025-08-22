@@ -5,7 +5,7 @@ import FirebaseCore
 struct User :Codable{
     let id: String
     var groupIds: [String]
-    var monthlyBudget: Double
+    var monthlyBudget: Int
     let photoURL:String
     let email:String
     let name: String

@@ -100,4 +100,11 @@ final class UserViewModel: ObservableObject {
     func decliningGroupInvite(invite:Invite) async {
         await self.removeInvite(invite: invite)
     }
+    
+    func setMonthlyBudget(budget:Int){
+        Task{
+            try? await self.userRepository.setMonthlyBudget(budget: budget)
+        }
+        self.user.monthlyBudget = budget
+    }
 }

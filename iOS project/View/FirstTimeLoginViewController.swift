@@ -11,7 +11,7 @@ class FirstTimeLoginViewController: UIViewController {
     @IBOutlet weak var budgetLabel: UILabel!
     @IBOutlet weak var budgetSlider: UISlider!
     
-    fileprivate var userBduget: Double!
+    fileprivate var userBduget: Int!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,12 +19,12 @@ class FirstTimeLoginViewController: UIViewController {
     }
     
     @IBAction func nextButtonTapped(_ sender: Any) {
-        self.userBduget = Double(budgetSlider.value)
+        self.userBduget = Int(budgetSlider.value)
     }
     
     @IBAction func isValueChangedSlider(_ sender: UISlider) {
-        let value = Double(sender.value)
-        budgetLabel.text = String(format: "%.0f $", value)
+        let value = Int(sender.value)
+        budgetLabel.text = String(format: "%d $", value)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -43,7 +43,7 @@ class IconSelectViewController: UIViewController {
     @IBOutlet weak var SelectedIconDisplay: UIImageView!
     @IBOutlet weak var photoSelectorButton: UIButton!
     
-    fileprivate var userBduget: Double = 0
+    fileprivate var userBduget: Int = 0
     private var selectedImage:Any?
     
     override func viewDidLoad() {

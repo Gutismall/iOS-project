@@ -11,6 +11,7 @@ import FirebaseAuth
 class SettingsViewController: UIViewController {
     
     
+    @IBOutlet weak var tableContainer: UIView!
     @IBOutlet weak var HightConstraint: NSLayoutConstraint!
     @IBOutlet weak var SettingsTable: UITableView!
     @IBOutlet weak var TopContainer: UIView!
@@ -50,13 +51,23 @@ class SettingsViewController: UIViewController {
         SettingsTable.clipsToBounds = true
         
         SettingsTable.rowHeight = UITableView.automaticDimension
-        SettingsTable.estimatedRowHeight = 56
+        
+        SettingsTable.layer.cornerRadius = 20
+        SettingsTable.layer.masksToBounds = true
+        
+        SettingsTable.tableHeaderView = nil
+        
+        tableContainer.layer.shadowOpacity = 0.6
+        tableContainer.layer.shadowColor = UIColor(named: "Secondery Color")?.cgColor
+        tableContainer.layer.shadowOffset = CGSize(width: 0, height: 3)
+        tableContainer.layer.shadowRadius = 10
+        tableContainer.layer.cornerRadius = 20
         
 
-        SettingsTable.tableHeaderView = UIView()
-        SettingsTable.tableFooterView = UIView()
-        SettingsTable.separatorInset = .zero
-        SettingsTable.layoutMargins = .zero
+//        SettingsTable.tableHeaderView = UIView()
+//        SettingsTable.tableFooterView = UIView()
+//        SettingsTable.separatorInset = .zero
+//        SettingsTable.layoutMargins = .zero
         
         
     }
@@ -72,14 +83,12 @@ class SettingsViewController: UIViewController {
 
 extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
     
-    
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return CGFloat.leastNormalMagnitude
-    }
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return CGFloat.leastNormalMagnitude
-    }
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return CGFloat.leastNormalMagnitude
+//    }
+//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+//        return CGFloat.leastNormalMagnitude
+//    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 4
     }
@@ -117,7 +126,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            return
+            let changebudgetVC = ChnageBudgetViewController()
+            present(changebudgetVC,animated: true)
+            break
         case 1:
             return
         case 2:

@@ -36,7 +36,7 @@ final class LoginViewModel {
             let newUser = User(
                 id: user.uid,
                 groupIds: [],
-                monthlyBudget: 0.0,
+                monthlyBudget: 0,
                 photoURL: "",
                 email: user.email ?? email,
                 name: fullName,
@@ -93,7 +93,7 @@ final class LoginViewModel {
                 let newUser = User(
                     id: uid,
                     groupIds: [],
-                    monthlyBudget: 0.0,
+                    monthlyBudget: 0,
                     photoURL: "",
                     email: firebaseUser.email ?? "",
                     name: firebaseUser.displayName ?? "",

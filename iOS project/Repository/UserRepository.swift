@@ -23,7 +23,7 @@ final class UserRepository {
     // Parse user document data and invites into a User object.
     private func parseUser(userId: String, data: [String: Any], pendingInvites: [Invite]) -> User {
         let groupIds = data["groupIds"] as? [String] ?? []
-        let monthlyBudget = data["monthlyBudget"] as? Double ?? 0.0
+        let monthlyBudget = data["monthlyBudget"] as? Int ?? 0
         let isFirstTime = data["isFirstTime"] as? Bool ?? true
         let photoURL = data["photoURL"] as? String ?? ""
         let email = data["email"] as? String ?? ""
@@ -107,5 +107,12 @@ final class UserRepository {
             .collection("invites")
             .document(inviteId)
             .setData(data)
+    }
+    
+    func setMonthlyBudget(budget: Int) async throws {
+        let userRef = db.collection("Users").document(Auth.auth().currentUser?.uid ?? "")
+        try await userRef.updateData([
+            "monthlyBudget": budget
+        ])
     }
 }
