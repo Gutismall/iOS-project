@@ -26,7 +26,8 @@ It allows people to create groups, add charges, and track activities in real tim
 - **Backend:** Firebase (Auth, Firestore, Storage)  
 - **UI:** UIKit, Auto Layout, Custom Cells, Static Tables  
 
-![Main Screen](Screenshots/IMG_144951987F6A-1.jpeg)
-![Groups Screen](Screenshots/IMG_144951987F6A-2.jpeg)
-![Activites Screen](Screenshots/IMG_144951987F6A-3.jpeg)
-![Settings Screen](Screenshots/IMG_144951987F6A-4.jpeg)
+
+<img src="Screenshots/IMG_144951987F6A-1.jpeg" alt="My Image" width="300"/>
+<img src="Screenshots/IMG_144951987F6A-2.jpeg" alt="My Image" width="300"/>
+<img src="Screenshots/IMG_144951987F6A-3.jpeg" alt="My Image" width="300"/>
+<img src="Screenshots/IMG_144951987F6A-4.jpeg" alt="My Image" width="300"/>
