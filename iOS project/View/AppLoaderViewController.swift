@@ -35,13 +35,13 @@ class AppLoaderViewController: UIViewController {
             
             let user = await UserViewModel.shared.fetchUser(userId: uid)
             UserViewModel.shared.setUser(user: user)
+            
+            print(user)
             // Load group data
             let groupIds = user.groupIds
             await GroupsViewModel.shared.fetchGroups(groupIds: groupIds)
             
-            var allActivities = GroupsViewModel.shared.groups.flatMap { $0.activities }
-            allActivities.sort {$0.timestamp.seconds < $1.timestamp.seconds }
-            ActivityViewModel.shared.setActivities(activities: allActivities)
+            ActivityViewModel.shared.fetchActivities(for: groupIds)
             
             showMainScreen()
         }

@@ -18,6 +18,7 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var userIconDisplay: UIImageView!
     @IBOutlet weak var userEmailText: UILabel!
     @IBOutlet weak var userNameText: UILabel!
+    @IBOutlet weak var IconImageViewContainer: UIView!
     
     let ViewModel = SettingsVM()
     
@@ -26,7 +27,12 @@ class SettingsViewController: UIViewController {
         TopContainer.layer.cornerRadius = 10
         tableConfig()
         userConfig()
-        
+        self.userIconDisplay.layer.cornerRadius = self.userIconDisplay.frame.width / 2
+        self.IconImageViewContainer.layer.cornerRadius = self.IconImageViewContainer.frame.width / 2
+        self.IconImageViewContainer.layer.shadowColor = UIColor.black.cgColor
+        self.IconImageViewContainer.layer.shadowOffset = CGSize(width: 0, height: 4)
+        self.IconImageViewContainer.layer.shadowOpacity = 0.5
+        self.IconImageViewContainer.layer.shadowRadius = 12 
     }
     private func userConfig(){
         self.userNameText.text = UserViewModel.shared.user.name
@@ -34,6 +40,8 @@ class SettingsViewController: UIViewController {
         self.userEmailText.text = UserViewModel.shared.user.email
         
         let photoURL = UserViewModel.shared.user.photoURL
+        
+        print(photoURL)
         
         if let url = URL(string: photoURL), url.scheme == "http" || url.scheme == "https" {
             self.userIconDisplay.kf.setImage(with: url)
@@ -90,7 +98,7 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
 //        return CGFloat.leastNormalMagnitude
 //    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -110,11 +118,6 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
             break
             //Reset Password
         case 2:
-            cell.iconImage.image = UIImage(named: "resetPasswordIcon")
-            cell.settingLabel.text = "Reset Password"
-            break
-            //Log out
-        case 3:
             cell.iconImage.image = UIImage(named: "logoutIcon")
             cell.settingLabel.text = "Log Out"
             break
@@ -130,10 +133,9 @@ extension SettingsViewController:UITableViewDelegate,UITableViewDataSource{
             present(changebudgetVC,animated: true)
             break
         case 1:
+            self.performSegue(withIdentifier: "ShowChangeIconSegue", sender: UITableViewCell.self)
             return
         case 2:
-            return
-        case 3:
             do{
                 try ViewModel.signOut()
             }catch{

@@ -37,8 +37,6 @@ final class GroupsViewModel: ObservableObject {
     func createGroup(groupName: String, icon: String, invitedEmails: [String]) async throws {
         //create new group in db
         let newGroup = try await self.groupRepository.createGroup(name: groupName, icon: icon)
-        //add the group to the local data
-        self.groups.append(newGroup)
         //create new activity
         let activity = ActivityViewModel.shared.buildActivity(type:.groupCreated)
         //add activity to to group localy and remote
@@ -95,5 +93,22 @@ final class GroupsViewModel: ObservableObject {
             print("Failed to remove charge: \(error)")
         }
         
+    }
+    
+    func addGroup(groupId: String) async {
+        do {
+            // Fetch the group details from repository
+            let fetchedGroup = try await self.groupRepository.fetchGroups(groupIds: [groupId]).first
+            ActivityViewModel.shared.fetchActivities(for: [groupId])
+            if let group = fetchedGroup {
+                await MainActor.run {
+                    self.groups.append(group)
+                }
+            }
+            // Update remote members with current user
+            try await self.groupRepository.addCurrentUserToGroup(groupId: groupId)
+        } catch {
+            print("Failed to add new group: \(error)")
+        }
     }
 }

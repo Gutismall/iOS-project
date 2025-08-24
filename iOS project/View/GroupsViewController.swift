@@ -27,6 +27,14 @@ class GroupsViewController: UIViewController {
                 self?.GroupsTableView.reloadData()
             }
             .store(in: &cancellables)
+        
+        
+        // Stop reacting to model changes when logout starts
+        NotificationCenter.default.publisher(for: .willLogout)
+            .sink { [weak self] _ in
+                self?.cancellables.removeAll()
+            }
+            .store(in: &cancellables)
     }
     
     
@@ -45,6 +53,11 @@ class GroupsViewController: UIViewController {
             let group = GroupsViewModel.shared.groups[indexPath.row]
             detailsVC.group = group
         }
+    }
+    
+    deinit {
+        // Extra safety: ensure any remaining subscriptions are cancelled
+        cancellables.removeAll()
     }
 }
 
@@ -131,6 +144,13 @@ class GroupDeteailsInfo: UIViewController{
             self.membersTable.reloadData()
             self.updateInfo()
         }.store(in: &cancellables)
+        
+        // Stop reacting to model changes when logout starts
+        NotificationCenter.default.publisher(for: .willLogout)
+            .sink { [weak self] _ in
+                self?.cancellables.removeAll()
+            }
+            .store(in: &cancellables)
     }
     
     func updateInfo() {
@@ -138,6 +158,10 @@ class GroupDeteailsInfo: UIViewController{
         mostUsedCategory.text = groupInfoViewModel.statistics[0].description
         totalChargesNumber.text = groupInfoViewModel.statistics[1].description
         totalExpencesNumber.text = groupInfoViewModel.statistics[3].description
+    }
+    
+    deinit {
+        cancellables.removeAll()
     }
 }
 
@@ -193,6 +217,13 @@ class GroupDeteailsCharges: UIViewController,ChargeModalDelegate{
             print("executed")
             self.ChargesTableVIew.reloadData()
         }.store(in: &cancellables)
+        
+        // Stop reacting to model changes when logout starts
+        NotificationCenter.default.publisher(for: .willLogout)
+            .sink { [weak self] _ in
+                self?.cancellables.removeAll()
+            }
+            .store(in: &cancellables)
     }
     
     
@@ -212,8 +243,9 @@ class GroupDeteailsCharges: UIViewController,ChargeModalDelegate{
         }
     }
     
-    
-    
+    deinit {
+        cancellables.removeAll()
+    }
 }
 
 extension GroupDeteailsCharges : UITableViewDelegate,UITableViewDataSource{

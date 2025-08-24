@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseFirestore
+import UIKit
 
 final class UserViewModel: ObservableObject {
     static var shared = UserViewModel()
@@ -77,6 +78,7 @@ final class UserViewModel: ObservableObject {
             if !self.user.groupIds.contains(groupId) {
                 self.user.groupIds.append(groupId)
                 self.user = user
+                await GroupsViewModel.shared.addGroup(groupId: groupId)
             }
         }
         // Remote update
@@ -106,5 +108,34 @@ final class UserViewModel: ObservableObject {
             try? await self.userRepository.setMonthlyBudget(budget: budget)
         }
         self.user.monthlyBudget = budget
+    }
+    
+    @MainActor
+    func setUserIcon(image: Any) async throws -> String{
+        if let image = image as? UIImage {
+            Task{
+                let newLink = try await self.userRepository.setUserIcon(image: image)
+                print("inside viewModel ",newLink)
+                if self.user != nil{
+                    self.user.photoURL = newLink
+                }
+                return newLink
+            }
+        }
+        else{
+            Task{
+                let newLink = try await self.userRepository.setUserIcon(image: image as! String)
+                if self.user != nil {
+                    self.user.photoURL = image as! String
+                }
+            }
+        }
+        return ""
+    }
+    
+    func updateUserData(data:[String:Any]) throws{
+        Task{
+            try await self.userRepository.updateUserData(data: data)
+        }
     }
 }

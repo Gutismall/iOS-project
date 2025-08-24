@@ -1,6 +1,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseCore
+import FirebaseFirestore
 
 struct ActivityBuilder {
     var id: String = UUID().uuidString
@@ -49,6 +50,19 @@ class ActivityViewModel: ObservableObject {
         builder.timestamp = Timestamp(date: Date())
         return builder.build()
     }
-    
-    
+
+    /// Fetch all activities from local GroupsViewModel groups, filter by groupIds,
+    /// collect them, sort by timestamp, and publish to `activities`.
+    func fetchActivities(for groupIds: [String]) {
+        var collected = self.activities
+
+        for group in GroupsViewModel.shared.groups where groupIds.contains(group.id) {
+            collected.append(contentsOf: group.activities)
+        }
+
+        collected.sort { $0.timestamp.seconds < $1.timestamp.seconds }
+
+        let result = collected   // capture-by-value before hopping to MainActor
+        self.activities = result
+    }
 }

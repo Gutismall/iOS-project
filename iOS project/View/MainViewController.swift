@@ -39,8 +39,9 @@ class MainViewController: UIViewController {
             else{
                 self?.groupsSpending.isHidden = false
                 self?.noGroupsLabel.isHidden = true
-                self?.groupsSpending.reloadData()
+                
             }
+            self?.groupsSpending.reloadData()
             self?.progressModel.updateBudget()
         }.store(in: &cancellables)
         
@@ -50,7 +51,18 @@ class MainViewController: UIViewController {
         
         UserViewModel.shared.$user.receive(on: DispatchQueue.main).sink { [weak self] _ in
             self?.progressModel.updateBudget()
+            self?.groupsSpending.reloadData()
+            self?.lastActivity.reloadData()
         }.store(in: &cancellables)
+        
+        // Stop reacting to model changes when logout starts
+        NotificationCenter.default.publisher(for: .willLogout)
+            .sink { [weak self] _ in
+                // Cancel all Combine sinks so table reloads / UI updates won't fire
+                self?.cancellables.removeAll()
+            }
+            .store(in: &cancellables)
+        
         initTableViews()
         initViews()
     }
@@ -167,6 +179,15 @@ class MainViewController: UIViewController {
         super.viewDidLayoutSubviews()
         updateTablesSizes()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(GroupsViewModel.shared.groups.count)
+    }
+    
+    deinit {
+        // Extra safety: ensure any remaining subscriptions are cancelled
+        cancellables.removeAll()
+    }
 }
 
 // MARK: - UITableViewDelegate & UITableViewDataSource
@@ -211,4 +232,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             groupsNavController.pushViewController(detailsVC, animated: true)
         }
     }
+}
+
+extension Notification.Name {
+    static let willLogout = Notification.Name("willLogout")
 }

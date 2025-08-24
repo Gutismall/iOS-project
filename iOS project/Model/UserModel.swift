@@ -6,7 +6,7 @@ struct User :Codable{
     let id: String
     var groupIds: [String]
     var monthlyBudget: Int
-    let photoURL:String
+    var photoURL:String 
     let email:String
     let name: String
     var isFirstTime: Bool

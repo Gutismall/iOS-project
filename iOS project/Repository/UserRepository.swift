@@ -1,4 +1,5 @@
 import Foundation
+import FirebaseStorage
 import FirebaseFirestore
 import FirebaseAuth
 
@@ -114,5 +115,44 @@ final class UserRepository {
         try await userRef.updateData([
             "monthlyBudget": budget
         ])
+    }
+    
+    @MainActor
+    func setUserIcon(image: Any) async throws -> String{
+        let userId = Auth.auth().currentUser?.uid ?? ""
+        let userRef = db.collection("Users").document(userId)
+        
+        if let image = image as? UIImage {
+            let storageRef = Storage.storage().reference().child("userIcons/\(userId).png")
+            do {
+                try await storageRef.delete()
+            } catch {
+                let nsError = error as NSError
+                // Ignore only "object not found" error
+                if nsError.domain != StorageErrorDomain || nsError.code != StorageErrorCode.objectNotFound.rawValue {
+                    throw error
+                }
+            }
+            let imageToUpload = image.pngData()
+            _ = try await storageRef.putDataAsync(imageToUpload!, metadata: nil)
+            let url = try await storageRef.downloadURL().absoluteString
+            try await userRef.updateData([
+                "photoURL": url
+            ])
+            print("inside repository ",url)
+            return url
+        }
+        else{
+            try await userRef.updateData([
+                "photoURL": image as! String
+            ])
+        }
+        return ""
+    }
+    
+    func updateUserData(data:[String:Any]) async throws{
+        let userId = Auth.auth().currentUser?.uid ?? ""
+        let userRef = db.collection("Users").document(userId)
+        try await userRef.updateData(data)
     }
 }

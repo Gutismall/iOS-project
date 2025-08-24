@@ -54,11 +54,19 @@ class ActivityViewController: UIViewController {
                 let isEmpty = UserViewModel.shared.user.pendingInvites.isEmpty
                 self.invitesTable.isHidden = isEmpty
                 self.invitesTable.reloadData()
+                self.activityTableView.reloadData()
 
                 // If you want a little animation:
                 UIView.animate(withDuration: 0.25) {
                     self.view.layoutIfNeeded()
                 }
+            }
+            .store(in: &cancellables)
+
+        // Stop reacting to model changes when logout starts
+        NotificationCenter.default.publisher(for: .willLogout)
+            .sink { [weak self] _ in
+                self?.cancellables.removeAll()
             }
             .store(in: &cancellables)
     }
@@ -67,9 +75,12 @@ class ActivityViewController: UIViewController {
         self.invitesTable.reloadData()
         self.invitesTable.layoutIfNeeded()
         self.ActivityTableHeightConstraints.constant = self.activityTableView.contentSize.height
-        
     }
-    
+
+    deinit {
+        // Extra safety: ensure any remaining subscriptions are cancelled
+        cancellables.removeAll()
+    }
 
     func tableViews() {
         activityTableView.layer.cornerRadius = 20
@@ -112,7 +123,9 @@ extension ActivityViewController: UITableViewDataSource, UITableViewDelegate, In
     func didTapAccept(on cell: InvitesCell) {
         guard let indexPath = invitesTable.indexPath(for: cell),
               let invite = UserViewModel.shared.user?.pendingInvites[indexPath.row] else { return }
-        Task { await UserViewModel.shared.acceptingGroupInvite(invite: invite) }
+        Task {
+            await UserViewModel.shared.acceptingGroupInvite(invite: invite)
+        }
     }
 
     func didTapDecline(on cell: InvitesCell) {

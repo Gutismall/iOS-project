@@ -135,4 +135,16 @@ final class GroupsRepository {
             .document(charge.id)
         try await chargeRef.delete()
     }
+    
+    /// Ensure the current user is a member of the group by adding their uid to the group's members array.
+    func addCurrentUserToGroup(groupId: String) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw NSError(domain: "GroupsRepository", code: 401, userInfo: [NSLocalizedDescriptionKey: "No user logged in"])
+        }
+        try await db.collection("Groups").document(groupId).updateData([
+            "members": FieldValue.arrayUnion([user.uid])
+        ])
+    }
 }
+
+    

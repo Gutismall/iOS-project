@@ -1,9 +1,5 @@
 
 import UIKit
-import Firebase
-import FirebaseAuth
-import FirebaseFirestore
-import FirebaseStorage
 import TOCropViewController
 
 class FirstTimeLoginViewController: UIViewController {
@@ -15,6 +11,8 @@ class FirstTimeLoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        budgetSlider.minimumValue = 100
+        budgetSlider.maximumValue = 10000
         isValueChangedSlider(budgetSlider)
     }
     
@@ -56,69 +54,20 @@ class IconSelectViewController: UIViewController {
     }
     
     @IBAction func DoneButtonTapped(_ sender: Any) {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        
-        if let iconName = selectedImage as? String {
-            // Save icon name to Firestore
-            let db = Firestore.firestore()
-            db.collection("Users").document(userId).updateData([
-                "monthlyBudget": self.userBduget,
-                "iconName": iconName,
-                "isFirstTime": false
-            ]) { error in
-                if let error = error {
-                    print("Error saving icon name: \(error)")
-                } else {
-                    print("Icon name saved successfully!")
-                    // Transition to main screen
-                    self.transitionToMainScreen()
-                }
+        Task{@MainActor in
+            do{
+                try await UserViewModel.shared.setUserIcon(image: selectedImage!)
+                try UserViewModel.shared.updateUserData(data: [
+                    "monthlyBudget": self.userBduget,
+                    "isFirstTime": false
+                ])
+                print("Icon name saved successfully!")
+                self.transitionToMainScreen()
+            }catch{
+                print("Error saving icon name: \(error)")
             }
-        } else if let imageToUpload = selectedImage as? UIImage,
-                  let imageData = imageToUpload.jpegData(compressionQuality: 0.8) {
-            // Upload photo to Storage
-            let storageRef = Storage.storage().reference().child("userIcons/\(userId).png")
-            storageRef.putData(imageData, metadata: nil) { metadata, error in
-                guard error == nil else {
-                    print("Error uploading image: \(error!)")
-                    return
-                }
-                storageRef.downloadURL { url, error in
-                    guard let photoURL = url, error == nil else {
-                        print("Error getting download URL: \(error!)")
-                        return
-                    }
-                    // Update Auth profile
-                    let user = Auth.auth().currentUser
-                    let changeRequest = user?.createProfileChangeRequest()
-                    changeRequest?.photoURL = photoURL
-                    changeRequest?.commitChanges { error in
-                        if let error = error {
-                            print("Error updating profile photo: \(error)")
-                        } else {
-                            print("Profile photo updated!")
-                        }
-                    }
-                    // Update Firestore
-                    let db = Firestore.firestore()
-                    db.collection("Users").document(userId).updateData([
-                        "monthlyBudget": self.userBduget,
-                        "photoURL": photoURL.absoluteString,
-                        "isFirstTime": false
-                    ]) { error in
-                        if let error = error {
-                            print("Error updating budget: \(error)")
-                        } else {
-                            print("Budget and photoURL saved successfully!")
-                            // Transition to main screen
-                            self.transitionToMainScreen()
-                        }
-                    }
-                }
-            }
-        } else {
-            print("No image or icon selected")
         }
+        
     }
     
     
