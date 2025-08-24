@@ -12,6 +12,7 @@ build/
 DerivedData/
 iOS projectTests/
 iOS projectUITests/
+iOS project/GoogleService-Info.plist
 
 # Swift Package Manager
 .swiftpm/
