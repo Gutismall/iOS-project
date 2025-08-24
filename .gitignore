@@ -6,6 +6,8 @@
 *.xcodeproj/project.xcworkspace/
 *.xcscheme
 *.playground/xcuserdata/
+# GoogleService Info
+iOS project/GoogleService-Info.plist
 
 # Build products
 build/
@@ -27,6 +29,7 @@ Carthage/
 # Other
 .jazzy/
 .swiftlint.yml
+
 .travis.yml
 .fastlane/
 .idea/
